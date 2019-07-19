@@ -1,0 +1,138 @@
+<div class="jumbotron">
+  <button class="tab-btn" ng-click="changeTabFun('e')">Expenses</button>
+  <button class="tab-btn" ng-click="changeTabFun('i')">Incomes</button>
+  <div id="reminders" style="overflow-y: scroll;">
+        <p>REMINDERS</p>
+        <button id="closeReminders" onclick="document.getElementById('reminders').style.display='none'">X</button> 
+  </div>
+  <div id="app-message">Select a budget field you want to track!</div>
+  <div id="expenses-content" class="row" hidden>
+      <div class="col-lg-3 col-md-3" id="budget-category-tabs">
+          <button class="category-btn" ng-click="category('1')" id="1">Clothes</button>
+          <button class="category-btn" ng-click="category('2')" id="2">Life Expenses</button>
+          <button class="category-btn" ng-click="category('3')" id="3">Vacation</button>
+          <button class="category-btn" ng-click="category('4')" id="4">Bills</button>
+          <button class="category-btn" ng-click="category('5')" id="5">Others</button>
+      </div>
+      <div class="col-lg-8 col-md-6" id="category-message">Choose a category!</div>
+      <div class="col-lg-8 col-md-6" id="nothing-message" hidden>No data available to display!</div>
+      <div class="table-responsive col-lg-8 col-md-6" id="tableContainer" style="height:300px; width:70%; overflow-y: scroll;" hidden>
+          <table class="table table-bordered" id="dataTable">
+              <col width="60%">
+              <col width="10%">
+              <col width="30%">
+              <thead>
+                  <tr>
+                      <th id="tableTitle">Name</th>
+                      <th id="tableTitle">Ammount</th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody id="data">
+                  <tr ng-repeat="object in expenses">
+                        <td ng-model="articleId" id="articleId" hidden>{{object.id}}</td>
+                        <td ng-mouseenter="showNote(object)" ng-mouseleave="hideNote()">{{object.name}}</td>
+                        <td ng-mouseenter="showNote(object)" ng-mouseleave="hideNote()">{{object.ammount}}</td>
+                        <td>
+                          <input type="submit" id='editButton' value="" ng-click='openAddForm(object)'/>
+                          <input type="submit" id='deleteButton' value="" ng-click='deleteFun(object)'/>
+                          <input type="submit" id='noteButton' value="" ng-click='openNoteForm(object)'/>
+                          <input type="submit" id='reminderButton' value="" ng-click='openRemindForm(object)'/>
+                        </td>
+                  </tr>
+              </tbody>
+          </table>
+          <div id="addEditContainer" class="col-lg-8 col-md-6" hidden>
+                <input type="text" name="name" class="addComponentFields"
+                    id="expenseName" placeholder="Expense name" ng-model="expense.name" required/>
+                <span ng-show="form.name.$touched
+                    && form.name.$invalid">Name is not valid</span>
+
+                <input type="number" name="ammount" class="addComponentFields"
+                    id="ammount" step="0.01" min="0.00" placeholder="Ammount" ng-model="expense.ammount" required />
+                <span ng-show="form.ammount.$touched
+                    && form.ammount.$invalid">Ammount is not valid</span>
+                
+                <input type="submit" id='addSaveButton' class="addFormButton" value="Add" ng-click='addFun()'/>
+                <input type="submit" id='editSaveButton' class="addFormButton" value="Save" ng-click='editFun()' hidden/>
+          </div>
+          <div id="noteContainer" class="col-lg-8 col-md-6" hidden>
+                <input type="text" name="note" class="addComponentFields" id="note" placeholder="Add note" ng-model="editExpense.note" required/>
+                <input type="submit" id="noteSaveButton" class="addFormButton" value="Save" ng-click="noteFun()"/>
+          </div>
+          <div id="reminderContainer" class="col-lg-8 col-md-6" hidden>
+                <input type="date" id="datefield" class="addComponentFields" name="date" ng-model="reminder.date" required />
+                <input type="time" id="timefield" class="addComponentFields" name="time" ng-model="reminder.time" required />
+                <input type="text" id="reminderText" class="addComponentFields" name="reminderText" ng-model="reminder.text" required />
+                <input type="submit" id="noteSaveButton" class="addFormButton" value="Save" ng-click="remindFun()"/>
+          </div>
+          <script>
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1; 
+                var yyyy = today.getFullYear();
+                if(dd<10){
+                        dd='0'+dd
+                    } 
+                    if(mm<10){
+                        mm='0'+mm
+                    } 
+
+                today = yyyy+'-'+mm+'-'+dd;
+                document.getElementById("datefield").setAttribute("min", today);
+          </script>
+      </div>
+      <div class="col-lg-1 col-md-1" id="addButtonContainer" hidden>
+            <button id='addButton' ng-click='openAddForm(0)'></button>
+      </div>
+      <div class="col-lg-12 col-md-12" id="showNoteContainer" hidden>
+          <p id="noteText" ng-bind="notesText.text">Note:</p>
+      </div>
+  </div> 
+  <div id="incomes-content" hidden>
+    <div class="col-lg-8 col-md-6" id="nothing-message-incomes">No data available to display!</div>
+    <div class="table-responsive col-lg-8 col-md-6" id="tableContainer-incomes" style="height:300px; width:70%; overflow-y: scroll;" hidden>
+        <table class="table table-bordered" id="dataTable-incomes">
+            <col width="60%">
+            <col width="10%">
+            <col width="30%">
+            <thead>
+                <tr>
+                    <th id="tableTitle">Name</th>
+                    <th id="tableTitle">Ammount</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="data">
+                <tr ng-repeat="object in incomes">
+                      <td ng-model="incomeId" id="incomeId" hidden>{{object.id}}</td>
+                      <td>{{object.name}}</td>
+                      <td>{{object.ammount}}</td>
+                      <td>
+                        <input type="submit" id='editButton' value="" ng-click='openAddIncomeForm(object)'/>
+                        <input type="submit" id='deleteButton' value="" ng-click='deleteIncomeFun(object)'/>
+                      </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="addEditContainer-incomes" class="col-lg-8 col-md-6" hidden>
+                <input type="text" name="name" class="addComponentFields"
+                    id="incomeName" placeholder="Income name" ng-model="income.name" required/>
+                <span ng-show="form.name.$touched
+                    && form.name.$invalid">Name is not valid</span>
+
+                <input type="number" name="ammount" class="addComponentFields"
+                    id="ammount" step="0.01" min="0.00" placeholder="Ammount" ng-model="income.ammount" required />
+                <span ng-show="form.ammount.$touched
+                    && form.ammount.$invalid">Ammount is not valid</span>
+                
+                <input type="submit" id='addSaveIncomeButton' class="addFormButton" value="Add" ng-click='addIncomeFun()'/>
+                <input type="submit" id='editSaveIncomeButton' class="addFormButton" value="Save" ng-click='editIncomeFun()' hidden/>
+          </div>
+    </div>
+    <div class="col-lg-1 col-md-1" id="addButtonContainer-incomes">
+        <button id='addButton' ng-click='openAddIncomeForm(0)'></button>
+    </div>
+  </div>   
+</div>
+
