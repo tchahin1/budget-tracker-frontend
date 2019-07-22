@@ -33,6 +33,7 @@
     "karma": "^4.1.0",
     "karma-jasmine": "^2.0.1",
     "karma-phantomjs-launcher": "^1.0.4",
+    "morgan": "^1.9.1",
     "phantomjs-prebuilt": "^2.1.16",
     "time-grunt": "^1.0.0"
   },
